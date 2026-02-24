@@ -1,0 +1,106 @@
+# ============================
+# Build system
+# Required for any PEP 517/518 project
+# ============================
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ============================
+# Project metadata (PEP 621)
+# Defines name, version, authors, dependencies
+# ============================
+[project]
+name = "tfm"
+version = "0.1.0"
+description = "TFM NEXT 2026"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+
+authors = [
+    { name = "David Mejia", email = "david.mejia.cascante@gmail.com" }
+]
+
+# Runtime dependencies
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "scikit-learn>=1.3",
+    "pyarrow>=14.0",
+]
+
+# Optional dependency groups
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+    "mypy",
+]
+
+# ============================
+# URLs for documentation and repo
+# ============================
+[project.urls]
+#homepage = "https://github.com/user/tfm"
+#issues = "https://github.com/user/tfm/issues"
+
+# ============================
+# Package discovery (src layout)
+# ============================
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ============================
+# Black code formatter
+# ============================
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+# ============================
+# Ruff linter
+# ============================
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W"]
+ignore = ["E203"]
+
+# ============================
+# Mypy static typing
+# ============================
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["tfm"]
+
+# ============================
+# Pytest configuration
+# ============================
+[tool.pytest.ini-options]
+testpaths = ["tests"]
+addopts = "-q"
+
+# ============================
+# isort import sorter
+# ============================
+[tool.isort]
+profile = "black"
+
+# ============================
+# Project-specific configs
+# Paths and constants used by pipeline code
+# ============================
+[tool.tfm.paths]
+data = "data"
+raw = "data/raw"
+interim = "data/interim"
+processed = "data/processed"
+models = "models"
+reports = "reports"
+
+[tool.tfm.constants]
+seed = 42
+target = "sales"
+train_test_split = 0.2
