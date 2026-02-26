@@ -23,7 +23,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '3548b856-04f3-11f1-a49e-74563cb7704b:1-722347';
+#SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '3548b856-04f3-11f1-a49e-74563cb7704b:1-722351';
 
 --
 -- Table structure for table `cbi_answers`
@@ -363,7 +363,47 @@ CREATE TABLE `work_type` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_desempeno_empleado`(IN emp_id VARCHAR(11))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_desempeno_empleado`(IN codigo VARCHAR(11))
+BEGIN
+
+SELECT ho.emp_id AS Empleado,
+    ROUND(AVG(ho.hours_normal),1) AS Horas_Trabajo,
+    ROUND(AVG(ho.hours_extra),1) AS Horas_Extra,
+    ROUND(AVG(ho.absence),1) AS Ausencias,
+    ROUND(AVG(ho.absence_unapprove),1) AS Faltas,
+    ROUND(AVG(ho.lateness),1) AS Tardias,
+    ROUND(AVG(ho.rating),1) AS Rating,
+    ROUND(AVG(hp.feedback_clients),1) AS Retroalimentacion,
+    ROUND(AVG(hp.recognition),1) AS Reconocimientos,
+    ROUND(AVG(hp.help_manager),1) AS Ayuda_al_Jefe,
+    ROUND(AVG(hp.help_team),1) AS Ayuda_al_Equipo,
+    ROUND(AVG(cbi.cbi1 + cbi.cbi2 + cbi.cbi3 + cbi.cbi4 + cbi.cbi5 + cbi.cbi6), 1) AS CBI_Personal,
+	ROUND(AVG(cbi.cbi7 + cbi.cbi8 + cbi.cbi9 + cbi.cbi10 + cbi.cbi11 + cbi.cbi12 + cbi.cbi13), 1) AS CBI_Trabajo,
+	ROUND(AVG(cbi.cbi14 + cbi.cbi15 + cbi.cbi16 + cbi.cbi17 + cbi.cbi18 + cbi.cbi19), 1) AS CBI_Clientes
+FROM history_operation AS ho
+INNER JOIN history_performance as hp
+ON ho.emp_id = hp.emp_id
+INNER JOIN cbi_results AS cbi
+ON ho.emp_id = cbi.emp_id
+WHERE ho.emp_id = codigo
+GROUP BY ho.emp_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_desempeno_empleado_breakdown` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_desempeno_empleado_breakdown`(IN emp_id VARCHAR(11))
 BEGIN
 
 SELECT 
@@ -477,4 +517,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-25  9:41:01
+-- Dump completed on 2026-02-26  7:50:48
